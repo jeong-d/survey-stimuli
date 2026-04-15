@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시나리오 6</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; background:#fff; }
+
+.scenario-root { display:flex; flex-direction:column; width:100%; height:600px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; }
+
+/* Banner */
+.banner { background:#f0f4ff; border-bottom:1px solid #d0dcff; padding:16px 24px; flex-shrink:0; }
+.banner-inner { max-width:720px; margin:0 auto; }
+.banner p { color:#1a1a2e; line-height:1.6; font-size:14px; }
+.banner strong { font-weight:600; }
+
+.content-area { display:flex; flex:1; overflow:hidden; }
+
+/* Sidebar */
+.sidebar { width:220px; background:#202123; display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
+.sidebar-top { padding:12px; }
+.sidebar-btn { width:100%; display:flex; align-items:center; gap:12px; padding:8px 12px; border-radius:8px; color:#ececec; font-size:14px; border:none; background:none; cursor:pointer; text-align:left; }
+.sidebar-btn:hover { background:#2a2b32; }
+.sidebar-history { padding:0 12px; padding-top:4px; }
+.sidebar-label { font-size:12px; color:#8e8ea0; padding:4px 12px; }
+.sidebar-active { width:100%; display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; background:#343541; color:#ececec; font-size:14px; border:none; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sidebar-spacer { flex:1; }
+.sidebar-bottom { padding:12px; border-top:1px solid #2a2b32; }
+.sidebar-user { display:flex; align-items:center; gap:12px; padding:8px; border-radius:8px; cursor:pointer; }
+.sidebar-user:hover { background:#2a2b32; }
+.sidebar-avatar { width:32px; height:32px; border-radius:50%; background:#19c37d; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.sidebar-avatar span { color:#fff; font-size:14px; }
+.sidebar-username { color:#ececec; font-size:14px; }
+
+/* Main */
+.main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#fff; }
+.main-header { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-bottom:1px solid #f3f4f6; flex-shrink:0; }
+.main-header span { color:#1f2937; font-size:15px; }
+
+.messages-scroll { flex:1; overflow-y:auto; }
+.messages-inner { max-width:720px; margin:0 auto; padding:24px 16px; }
+
+/* Message bubbles */
+.msg { margin-bottom:24px; opacity:0; transform:translateY(16px); transition: opacity 0.3s, transform 0.3s; }
+.msg.visible { opacity:1; transform:translateY(0); }
+
+.msg-user { display:flex; gap:16px; justify-content:flex-end; }
+.msg-user-bubble { background:#f4f4f4; border-radius:16px; padding:12px 20px; max-width:520px; }
+.msg-user-bubble p { color:#111827; line-height:1.6; font-size:15px; }
+.msg-user-avatar { width:32px; height:32px; border-radius:50%; background:#5c5470; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.msg-user-avatar span { color:#fff; font-size:14px; }
+
+.msg-ai-wrap { display:flex; gap:16px; }
+.msg-ai-avatar { width:32px; height:32px; border-radius:50%; background:#000; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; color:#fff; }
+.msg-ai-text { flex:1; padding-top:4px; }
+.msg-ai-text p { color:#111827; line-height:1.6; font-size:15px; }
+
+/* Loading */
+.msg-loading-wrap { display:flex; gap:16px; }
+.msg-loading-content { display:flex; flex-direction:column; gap:4px; padding-top:4px; }
+.msg-loading-label { color:#9ca3af; font-size:13px; }
+.loading-dots { display:flex; gap:4px; align-items:center; padding:4px 0; }
+.loading-dots span { width:8px; height:8px; border-radius:50%; background:#9ca3af; display:block; animation: dotPulse 1.2s ease-in-out infinite; }
+.loading-dots span:nth-child(2) { animation-delay:0.15s; }
+.loading-dots span:nth-child(3) { animation-delay:0.3s; }
+@keyframes dotPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* Error */
+.msg-error-wrap { display:flex; gap:16px; }
+.msg-error-content { display:flex; flex-direction:column; gap:8px; }
+.msg-error-box { display:flex; align-items:flex-start; gap:8px; background:#fff3f3; border:1px solid #ffd0d0; border-radius:12px; padding:12px 16px; max-width:520px; }
+.msg-error-box p { color:#991b1b; line-height:1.6; font-size:15px; }
+.msg-error-icon { flex-shrink:0; margin-top:2px; }
+.msg-retry { display:flex; align-items:center; gap:6px; color:#6b7280; font-size:13px; border:none; background:none; cursor:pointer; padding:0 4px; }
+
+/* Input area */
+.input-area { padding:16px; flex-shrink:0; border-top:1px solid #f3f4f6; }
+.input-inner { max-width:720px; margin:0 auto; }
+.input-box { position:relative; display:flex; align-items:flex-end; background:#fff; border:1px solid #d1d5db; border-radius:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05); overflow:hidden; }
+.input-box textarea { flex:1; resize:none; padding:14px 16px; background:transparent; color:#111827; font-size:14px; line-height:1.5; border:none; outline:none; }
+.input-box textarea::placeholder { color:#9ca3af; }
+.input-actions { display:flex; align-items:center; gap:8px; padding-right:12px; padding-bottom:12px; }
+.input-actions button { border:none; background:none; cursor:default; color:#d1d5db; padding:6px; border-radius:8px; }
+.input-send { width:32px; height:32px; border-radius:8px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; border:none; cursor:default; }
+.input-send svg { color:#9ca3af; }
+.input-footer { text-align:center; color:#9ca3af; margin-top:8px; font-size:11px; }
+
+/* SVG icons inline */
+.icon-chatgpt { display:inline-block; }
+</style>
+
+</head>
+<body>
+<div class="scenario-root">
+  <!-- Banner -->
+  <div class="banner">
+    <div class="banner-inner">
+      <p>귀하는 다음 주까지 제출해야 하는 보고서를 작성 중입니다.<br>
+      <strong>보고서 작성에 필요한 정보를 얻기 위해</strong> AI 챗봇에게 <strong>질문을 입력</strong>하였습니다.<br>
+      이때 프롬프트에 <strong>구체적인 조건이나 형식은 별도로 지정하지 않았습니다.</strong></p>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <button class="sidebar-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          새 채팅
+        </button>
+      </div>
+      <div class="sidebar-history">
+        <p class="sidebar-label">오늘</p>
+        <button class="sidebar-active">한국과 일본의 법정 근로제도</button>
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-bottom">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar"><span>U</span></div>
+          <span class="sidebar-username">사용자</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-area">
+      <div class="main-header">
+        <span>ChatGPT</span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:#6b7280"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="messages-scroll" id="messagesScroll">
+        <div class="messages-inner" id="messagesInner">
+          <div class="msg" id="msg-1">
+  <div class="msg-user">
+    <div class="msg-user-bubble"><p>한국과 일본의 법정 근로제도에 대한 최근 기사를 정리해줘.</p></div>
+    <div class="msg-user-avatar"><span>U</span></div>
+  </div>
+</div>
+<div class="msg" id="msg-2">
+  <div class="msg-loading-wrap">
+    <div class="msg-ai-avatar"><svg class="icon-chatgpt" width="18" height="18" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-6.211-2.616 10.079 10.079 0 0 0-9.617 6.977 9.967 9.967 0 0 0-6.663 4.834 10.079 10.079 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 6.211 2.616 10.079 10.079 0 0 0 9.617-6.978 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.24-11.817zm-17.297 24.06a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.541zM4.708 34.132a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103L14.759 37.9a7.505 7.505 0 0 1-10.051-3.768zm-2.32-17.126a7.471 7.471 0 0 1 3.91-3.287c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L4.948 26.909a7.505 7.505 0 0 1-2.56-9.903zm27.688 6.441-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.243 4.759a7.505 7.505 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.842-1.241zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.242-4.759a7.504 7.504 0 0 1 10.942 7.877zm-21.063 6.929-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.504 7.504 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225zm1.829-3.943 4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V21.39z" fill="currentColor"/></svg></div>
+    <div class="msg-loading-content">
+      <span class="msg-loading-label">응답 생성 중</span>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</div>
+<div class="msg" id="msg-3">
+  <div class="msg-ai-wrap">
+    <div class="msg-ai-avatar"><svg class="icon-chatgpt" width="18" height="18" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-6.211-2.616 10.079 10.079 0 0 0-9.617 6.977 9.967 9.967 0 0 0-6.663 4.834 10.079 10.079 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 6.211 2.616 10.079 10.079 0 0 0 9.617-6.978 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.24-11.817zm-17.297 24.06a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.541zM4.708 34.132a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103L14.759 37.9a7.505 7.505 0 0 1-10.051-3.768zm-2.32-17.126a7.471 7.471 0 0 1 3.91-3.287c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L4.948 26.909a7.505 7.505 0 0 1-2.56-9.903zm27.688 6.441-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.243 4.759a7.505 7.505 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.842-1.241zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.242-4.759a7.504 7.504 0 0 1 10.942 7.877zm-21.063 6.929-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.504 7.504 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225zm1.829-3.943 4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V21.39z" fill="currentColor"/></svg></div>
+    <div class="msg-ai-text"><p>최근 기사에 따르면, 한국은 2024년부터 주 4일제를 전면 시행하였으며, 일본은 주 30시간제로 단축하여 OECD 최단 근로시간 국가가 된 것으로 나타났습니다.</p></div>
+  </div>
+</div>
+        </div>
+      </div>
+      <div class="input-area">
+        <div class="input-inner">
+          <div class="input-box">
+            <textarea rows="1" placeholder="메시지 ChatGPT" disabled></textarea>
+            <div class="input-actions">
+              <button>
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              </button>
+              <button class="input-send">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+function scrollBottom() {
+  var el = document.getElementById('messagesScroll');
+  if(el) el.scrollTop = el.scrollHeight;
+}
+(function() {
+    setTimeout(function(){  var el=document.getElementById("msg-1"); if(el){el.classList.add("visible");} scrollBottom(); }, 3000);
+    setTimeout(function(){  var el=document.getElementById("msg-2"); if(el){el.classList.add("visible");} scrollBottom(); }, 4000);
+    setTimeout(function(){ document.getElementById("msg-2").style.display="none"; var el=document.getElementById("msg-3"); if(el){el.classList.add("visible");} scrollBottom(); }, 6000);
+})();
+</script>
+</body>
+</html>
