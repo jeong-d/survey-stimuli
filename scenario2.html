@@ -86,7 +86,6 @@ body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; backgro
 .input-actions button { border:none; background:none; cursor:default; color:#d1d5db; padding:6px; border-radius:8px; }
 .input-send { width:32px; height:32px; border-radius:8px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; border:none; cursor:default; }
 .input-send svg { color:#9ca3af; }
-.input-footer { text-align:center; color:#9ca3af; margin-top:8px; font-size:11px; }
 
 /* SVG icons inline */
 .icon-chatgpt { display:inline-block; }
@@ -230,7 +229,6 @@ body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; backgro
               </button>
             </div>
           </div>
-          
         </div>
       </div>
     </main>
@@ -238,20 +236,23 @@ body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; backgro
 </div>
 
 <script>
-function scrollBottom() {
-  var el = document.getElementById('messagesScroll');
-  if(el) el.scrollTop = el.scrollHeight;
+function scrollToMessage(msgId) {
+  var msg = document.getElementById(msgId);
+  if(msg) {
+    msg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
+
 (function() {
-    setTimeout(function(){  var el=document.getElementById("msg-1"); if(el){el.classList.add("visible");} scrollBottom(); }, 3000);
-    setTimeout(function(){  var el=document.getElementById("msg-2"); if(el){el.classList.add("visible");} scrollBottom(); }, 4000);
-    setTimeout(function(){ document.getElementById("msg-2").style.display="none"; var el=document.getElementById("msg-3"); if(el){el.classList.add("visible");} scrollBottom(); }, 5500);
-    setTimeout(function(){  var el=document.getElementById("msg-4"); if(el){el.classList.add("visible");} scrollBottom(); }, 7200);
-    setTimeout(function(){  var el=document.getElementById("msg-5"); if(el){el.classList.add("visible");} scrollBottom(); }, 8200);
-    setTimeout(function(){ document.getElementById("msg-5").style.display="none"; var el=document.getElementById("msg-6"); if(el){el.classList.add("visible");} scrollBottom(); }, 9700);
-    setTimeout(function(){  var el=document.getElementById("msg-7"); if(el){el.classList.add("visible");} scrollBottom(); }, 11400);
-    setTimeout(function(){  var el=document.getElementById("msg-8"); if(el){el.classList.add("visible");} scrollBottom(); }, 12400);
-    setTimeout(function(){ document.getElementById("msg-8").style.display="none"; var el=document.getElementById("msg-9"); if(el){el.classList.add("visible");} scrollBottom(); }, 13900);
+    setTimeout(function(){  var el=document.getElementById("msg-1"); if(el){el.classList.add("visible");} }, 3000);
+    setTimeout(function(){  var el=document.getElementById("msg-2"); if(el){el.classList.add("visible");} }, 4000);
+    setTimeout(function(){ document.getElementById("msg-2").style.display="none"; var el=document.getElementById("msg-3"); if(el){el.classList.add("visible");} }, 5500);
+    setTimeout(function(){  var el=document.getElementById("msg-4"); if(el){el.classList.add("visible");} }, 7200);
+    setTimeout(function(){  var el=document.getElementById("msg-5"); if(el){el.classList.add("visible");} }, 8200);
+    setTimeout(function(){ document.getElementById("msg-5").style.display="none"; var el=document.getElementById("msg-6"); if(el){el.classList.add("visible");} }, 9700);
+    setTimeout(function(){  var el=document.getElementById("msg-7"); if(el){el.classList.add("visible");} }, 11400);
+    setTimeout(function(){  var el=document.getElementById("msg-8"); if(el){el.classList.add("visible");} }, 12400);
+    setTimeout(function(){ document.getElementById("msg-8").style.display="none"; var el=document.getElementById("msg-9"); if(el){el.classList.add("visible");} }, 13900);
 })();
 </script>
 </body>
